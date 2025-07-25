@@ -81,4 +81,31 @@ class Attendance(models.Model):
         ordering = ['-date', '-checkin_time']
 
     def __str__(self):
-        return f"{self.intern.full_name} - {self.date}" 
+        return f"{self.intern.full_name} - {self.date}"
+
+class QuizScore(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.CharField(max_length=30)
+    score = models.PositiveIntegerField()
+    taken_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'category')
+        ordering = ['-score', 'taken_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.category}: {self.score}"
+
+class TaskDeliverable(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.CharField(max_length=30)
+    task_index = models.PositiveIntegerField()
+    file = models.FileField(upload_to='deliverables/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'category', 'task_index')
+        ordering = ['uploaded_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.category} Task {self.task_index}" 

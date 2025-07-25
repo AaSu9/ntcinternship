@@ -63,6 +63,91 @@
                         <p>Welcome to the NTC Internship Program. Explore your dashboard for attendance, benefits, and more.</p>
                     </div>
                 </div>
+                <!-- Category-specific Tasks Section -->
+                <div class="ntc-card" style="margin:2rem auto;max-width:700px;">
+                    <div class="ntc-card-header ntc-card-soft">Tasks for You</div>
+                    <div class="ntc-card-body">
+                        <div id="ntc-task-progress" style="margin-bottom:1.2rem;"></div>
+                        <ol id="ntc-task-list" style="padding-left:1.2rem;"></ol>
+                        <div id="ntc-task-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,51,102,0.18);z-index:9999;align-items:center;justify-content:center;">
+                            <div style="background:#fff;padding:2rem 2.5rem;border-radius:16px;max-width:420px;width:90vw;box-shadow:0 8px 32px rgba(0,51,102,0.18);position:relative;">
+                                <button onclick="closeTaskModal()" style="position:absolute;top:1rem;right:1rem;font-size:1.3rem;background:none;border:none;cursor:pointer;">&times;</button>
+                                <h3 id="ntc-task-modal-title" style="color:#003366;margin-bottom:0.7rem;"></h3>
+                                <div id="ntc-task-modal-details" style="margin-bottom:1.2rem;color:#00509e;"></div>
+                                <div id="ntc-task-modal-upload"></div>
+                            </div>
+                        </div>
+                        <div id="ntc-task-message" style="margin-top:1rem;font-size:1.05rem;color:#28a745;"></div>
+                    </div>
+                </div>
+                <script>
+                function fetchTasks() {
+                    fetch('/tasks/', {credentials: 'same-origin'})
+                        .then(r => r.json())
+                        .then(data => {
+                            const list = document.getElementById('ntc-task-list');
+                            list.innerHTML = '';
+                            data.tasks.forEach((task, i) => {
+                                const li = document.createElement('li');
+                                li.style.marginBottom = '0.7rem';
+                                li.style.fontSize = '1.07rem';
+                                li.innerHTML = `<input type='checkbox' ${data.progress[i] ? 'checked' : ''} onchange='toggleTask(${i})' style='margin-right:0.7rem;transform:scale(1.2);'>` +
+                                    `<span style='cursor:pointer;color:#00509e;' onclick='showTaskModal(${i})'>${task.title}</span>`;
+                                if(data.progress[i]) li.style.textDecoration = 'line-through';
+                                list.appendChild(li);
+                            });
+                            document.getElementById('ntc-task-progress').innerHTML = `<div style='background:#e0e7ff;border-radius:8px;overflow:hidden;height:22px;'><div style='background:linear-gradient(90deg,#28a745 60%,#003366 100%);width:${data.percent}%;height:22px;transition:width 0.4s;'></div></div><div style='text-align:center;margin-top:0.3rem;font-weight:600;'>${data.percent}% Complete</div>`;
+                            window.ntcTaskData = data;
+                        });
+                }
+                function toggleTask(idx) {
+                    fetch('/tasks/', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                        body: new URLSearchParams({task_idx: idx})
+                    }).then(() => {
+                        fetchTasks();
+                        document.getElementById('ntc-task-message').innerText = 'Task progress updated!';
+                        setTimeout(()=>{document.getElementById('ntc-task-message').innerText='';}, 1200);
+                    });
+                }
+                function showTaskModal(idx) {
+                    const data = window.ntcTaskData;
+                    document.getElementById('ntc-task-modal-title').innerText = data.tasks[idx].title;
+                    document.getElementById('ntc-task-modal-details').innerText = data.tasks[idx].details;
+                    let uploadHtml = '';
+                    if(data.deliverables[idx]) {
+                        uploadHtml += `<div style='margin-bottom:0.7rem;'><b>Uploaded File:</b> <a href='${data.deliverables[idx].file_url}' target='_blank'>View</a> <span style='color:#7a869a;font-size:0.97rem;'>(${data.deliverables[idx].uploaded_at})</span></div>`;
+                    }
+                    uploadHtml += `<form id='ntc-upload-form' enctype='multipart/form-data'><input type='file' name='file' required style='margin-bottom:0.7rem;'><input type='hidden' name='task_idx' value='${idx}'><button type='submit' class='ntc-card-btn' style='font-size:1.01rem;'>Upload Deliverable</button></form>`;
+                    document.getElementById('ntc-task-modal-upload').innerHTML = uploadHtml;
+                    document.getElementById('ntc-task-modal').style.display = 'flex';
+                    document.getElementById('ntc-upload-form').onsubmit = function(e) {
+                        e.preventDefault();
+                        const formData = new FormData(this);
+                        fetch('/tasks/upload/', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                            body: formData
+                        }).then(r => r.json()).then(resp => {
+                            if(resp.success) {
+                                document.getElementById('ntc-task-message').innerText = 'File uploaded!';
+                                closeTaskModal();
+                                fetchTasks();
+                            } else {
+                                alert('Upload failed.');
+                            }
+                        });
+                    };
+                }
+                function closeTaskModal() {
+                    document.getElementById('ntc-task-modal').style.display = 'none';
+                }
+                document.addEventListener('DOMContentLoaded', fetchTasks);
+                </script>
+                <!-- End Tasks Section -->
                 <div style="margin:1.5rem 0;text-align:center;">
                     {% if can_checkin %}
                         <form method="post" action="/user-checkin/">

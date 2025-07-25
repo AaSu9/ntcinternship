@@ -1,0 +1,86 @@
+{% extends 'internship/base.html' %}
+{% block title %}Quiz Game - {{ category }}{% endblock %}
+{% block content %}
+<div class="container" style="max-width:700px;margin:2.5rem auto;">
+    <div class="ntc-card" style="padding:2rem 2.5rem;">
+        <div class="ntc-card-header ntc-card-tech" style="font-size:1.3rem;">Quiz Game: <span style="color:#ffd700;">{{ category }}</span></div>
+        <div class="ntc-card-body">
+            {% if completed %}
+                <div style="text-align:center;">
+                    <h2 style="color:#28a745;">Congratulations!</h2>
+                    <div style="font-size:1.2rem;margin-bottom:1.2rem;">You scored <b>{{ score }}/{{ questions|length }}</b> in the {{ category }} quiz.</div>
+                    <a href="/quiz/leaderboard/{{ category }}/" class="ntc-card-btn" style="margin-bottom:0.7rem;">View Leaderboard</a>
+                    <a href="{{ retake_url }}" class="ntc-card-btn" style="margin-bottom:0.7rem;background:#ffd700;color:#003366;">Retake Quiz</a>
+                    <a href="/dashboard/" class="ntc-card-btn">Back to Dashboard</a>
+                </div>
+                <div style="margin-top:2rem;">
+                    <h3 style="color:#003366;">Quiz Feedback</h3>
+                    <ol style="padding-left:1.2rem;">
+                        {% for q, correct in zipped_qf %}
+                        <li style="margin-bottom:1.1rem;">
+                            <div style="font-weight:600;">{{ q.q }}</div>
+                            <div>
+                                {% for opt in q.options %}
+                                    <span style="display:inline-block;margin-right:1.2rem;{% if forloop.counter0 == q.a %}color:#28a745;font-weight:700;{% endif %}">
+                                        {{ opt }}
+                                        {% if forloop.counter0 == q.a %}<span style="font-size:1.1em;">&#10003;</span>{% endif %}
+                                        {% if not correct and forloop.counter0 == q.a %}
+                                            <span style="color:#dc3545;font-size:1.1em;">(Your answer was incorrect)</span>
+                                        {% endif %}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            <div style="color:#00509e;font-size:0.98rem;margin-top:0.3rem;">Explanation: {{ q.explanation }}</div>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            {% else %}
+                <form method="post" style="margin-top:1.2rem;" id="quiz-form">
+                    {% csrf_token %}
+                    <div id="quiz-timer" style="font-size:1.1rem;font-weight:600;color:#003366;margin-bottom:1.2rem;text-align:right;"></div>
+                    {% for q in questions %}
+                        <div class="ntc-quiz-question" style="margin-bottom:1.5rem;">
+                            <div style="font-weight:600;font-size:1.08rem;margin-bottom:0.5rem;">Q{{ forloop.counter }}. {{ q.q }}</div>
+                            <div class="ntc-quiz-options">
+                                {% for opt in q.options %}
+                                    <label style="display:block;margin-bottom:0.3rem;">
+                                        <input type="radio" name="q{{ forloop.parentloop.counter0 }}" value="{{ forloop.counter0 }}" required>
+                                        {{ opt }}
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="ntc-card-btn" style="font-size:1.1rem;">Submit Quiz</button>
+                </form>
+                <div style="text-align:center;margin-top:1.5rem;">
+                    <a href="/quiz/leaderboard/{{ category }}/" class="ntc-card-btn">View Leaderboard</a>
+                </div>
+                <script>
+                // Timer (5 minutes)
+                let timeLeft = 5 * 60;
+                const timerDiv = document.getElementById('quiz-timer');
+                function updateTimer() {
+                    const min = Math.floor(timeLeft / 60);
+                    const sec = timeLeft % 60;
+                    timerDiv.textContent = `Time Left: ${min}:${sec.toString().padStart(2, '0')}`;
+                    if (timeLeft <= 0) {
+                        document.getElementById('quiz-form').submit();
+                    }
+                    timeLeft--;
+                }
+                updateTimer();
+                const timerInterval = setInterval(updateTimer, 1000);
+                document.getElementById('quiz-form').addEventListener('submit', () => clearInterval(timerInterval));
+                </script>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<style>
+.ntc-quiz-question { background: #f8fafc; border-radius: 10px; padding: 1rem 1.2rem; box-shadow: 0 2px 8px rgba(0,80,158,0.07); }
+.ntc-quiz-options label { font-size: 1.05rem; cursor: pointer; }
+.ntc-quiz-options input[type="radio"] { margin-right: 0.5rem; }
+</style>
+{% endblock %} 
