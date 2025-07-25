@@ -17,6 +17,11 @@ import base64
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from .forms import ProfileUpdateForm, UserUpdateForm
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import QuizScore, TaskDeliverable
+import random
+from django.views.decorators.http import require_POST
 
 def homepage(request):
     latest_application = None
@@ -208,6 +213,35 @@ def dashboard(request):
         application = latest_application
     profile = Profile.objects.filter(user=request.user).first()
     context = {'application': application, 'profile': profile, 'latest_application': latest_application}
+    # --- Add category-specific tasks ---
+    def get_category_tasks(category):
+        if category == 'Technical':
+            return [
+                'Design and implement a network topology for a simulated telecom environment.',
+                'Configure and secure a Cisco router and switch for a branch office.',
+                'Analyze network traffic using Wireshark and report on anomalies.',
+                'Develop a disaster recovery plan for NTC’s core network.',
+                'Present a seminar on 5G technology and its impact on telecom infrastructure.'
+            ]
+        elif category == 'Software':
+            return [
+                'Build a Django web app to manage internal NTC projects.',
+                'Develop a REST API for telecom service provisioning.',
+                'Automate daily report generation using Python scripts.',
+                'Create a dashboard for real-time monitoring of telecom KPIs.',
+                'Integrate SMS gateway functionality into an existing application.'
+            ]
+        elif category == 'Admin/HR':
+            return [
+                'Design an onboarding process for new NTC interns.',
+                'Conduct a survey and analyze employee satisfaction data.',
+                'Draft a policy for remote work and present to HR.',
+                'Organize a virtual team-building event and report outcomes.',
+                'Prepare a compliance checklist for HR documentation.'
+            ]
+        else:
+            return []
+    # --- End tasks function ---
     if not application:
         context['show_apply'] = True
     elif application.status == 'Pending':
@@ -283,6 +317,7 @@ Program/Year: {profile.program_year}
             'can_checkin': can_checkin,
             'total_present': total_present,
             'total_absent': total_absent,
+            'tasks': get_category_tasks(application.package.category if application.package else None),
         })
     return render(request, 'internship/dashboard.html', context)
 
@@ -314,4 +349,161 @@ def profile_update(request):
     else:
         p_form = ProfileUpdateForm(instance=profile)
         u_form = UserUpdateForm(instance=request.user)
-    return render(request, 'internship/profile_update.html', {'p_form': p_form, 'u_form': u_form}) 
+    return render(request, 'internship/profile_update.html', {'p_form': p_form, 'u_form': u_form})
+
+# --- Quiz Game View ---
+@login_required
+def quiz_game(request):
+    application = InternshipApplication.objects.filter(user=request.user, status='Accepted').order_by('-submitted_at').first()
+    if not application or not application.package:
+        return redirect('dashboard')
+    category = application.package.category
+    quiz_data = {
+        'Technical': [
+            {'q': 'What does a router do in a network?', 'options': ['Routes data packets', 'Stores files', 'Prints documents', 'Encrypts emails'], 'a': 0, 'explanation': 'A router directs data packets between networks.'},
+            {'q': 'Which protocol is used for secure web browsing?', 'options': ['HTTP', 'FTP', 'SSH', 'HTTPS'], 'a': 3, 'explanation': 'HTTPS encrypts data for secure web communication.'},
+            {'q': 'What is the main benefit of 5G over 4G?', 'options': ['Lower cost', 'Higher speed and lower latency', 'More colors', 'Bigger screens'], 'a': 1, 'explanation': '5G offers much higher speed and lower latency than 4G.'},
+        ],
+        'Software': [
+            {'q': 'Which framework is used for Python web development?', 'options': ['React', 'Django', 'Laravel', 'Spring'], 'a': 1, 'explanation': 'Django is a popular Python web framework.'},
+            {'q': 'What does REST stand for?', 'options': ['Really Easy Simple Test', 'Representational State Transfer', 'Random Event Synchronous Task', 'Remote Execution Service Tool'], 'a': 1, 'explanation': 'REST stands for Representational State Transfer.'},
+            {'q': 'Which HTTP method is used to update data?', 'options': ['GET', 'POST', 'PUT', 'DELETE'], 'a': 2, 'explanation': 'PUT is used to update data in RESTful APIs.'},
+        ],
+        'Admin/HR': [
+            {'q': 'What is the main goal of onboarding?', 'options': ['Increase sales', 'Integrate new employees', 'Reduce taxes', 'Buy equipment'], 'a': 1, 'explanation': 'Onboarding helps new employees integrate into the organization.'},
+            {'q': 'Which law protects employee rights in Nepal?', 'options': ['Consumer Act', 'Labour Act', 'Education Act', 'Banking Act'], 'a': 1, 'explanation': 'The Labour Act protects employee rights in Nepal.'},
+            {'q': 'What is a key benefit of team-building?', 'options': ['Lower salaries', 'Better teamwork', 'Longer hours', 'More paperwork'], 'a': 1, 'explanation': 'Team-building improves teamwork and collaboration.'},
+        ],
+    }
+    # Retake logic
+    if request.GET.get('retake') == '1':
+        request.session.pop('quiz_score', None)
+        request.session.pop('quiz_completed', None)
+        request.session.pop('quiz_order', None)
+        request.session.pop('quiz_option_order', None)
+    # Randomize questions and options
+    questions = quiz_data.get(category, [])
+    if 'quiz_order' not in request.session:
+        order = list(range(len(questions)))
+        random.shuffle(order)
+        request.session['quiz_order'] = order
+    else:
+        order = request.session['quiz_order']
+    randomized_questions = [questions[i].copy() for i in order]
+    # Randomize options for each question
+    if 'quiz_option_order' not in request.session:
+        option_orders = []
+        for q in randomized_questions:
+            opts = list(enumerate(q['options']))
+            random.shuffle(opts)
+            option_orders.append([i for i, _ in opts])
+            q['options'] = [opt for _, opt in opts]
+            # Update answer index
+            q['a'] = option_orders[-1].index(q['a'])
+        request.session['quiz_option_order'] = option_orders
+    else:
+        option_orders = request.session['quiz_option_order']
+        for q, opt_order in zip(randomized_questions, option_orders):
+            q['options'] = [q['options'][i] for i in opt_order]
+            q['a'] = opt_order.index(q['a'])
+    score = request.session.get('quiz_score', 0)
+    completed = request.session.get('quiz_completed', False)
+    feedback = []
+    if request.method == 'POST':
+        answers = [int(request.POST.get(f'q{i}', -1)) for i in range(len(randomized_questions))]
+        score = sum(1 for i, q in enumerate(randomized_questions) if answers[i] == q['a'])
+        feedback = [answers[i] == q['a'] for i, q in enumerate(randomized_questions)]
+        request.session['quiz_score'] = score
+        request.session['quiz_completed'] = True
+        completed = True
+        QuizScore.objects.update_or_create(user=request.user, category=category, defaults={'score': score})
+    zipped_qf = list(zip(randomized_questions, feedback)) if feedback else None
+    return render(request, 'internship/quiz_game.html', {
+        'questions': randomized_questions,
+        'score': score,
+        'completed': completed,
+        'category': category,
+        'feedback': feedback,
+        'zipped_qf': zipped_qf,
+        'retake_url': '/quiz/?retake=1',
+    })
+
+# --- Quiz Leaderboard View ---
+@login_required
+def quiz_leaderboard(request, category):
+    top_scores = QuizScore.objects.filter(category=category).select_related('user').order_by('-score', 'taken_at')[:10]
+    return render(request, 'internship/quiz_leaderboard.html', {
+        'category': category,
+        'top_scores': top_scores,
+    })
+
+# --- Task Progress Tracker (AJAX) ---
+@csrf_exempt
+@login_required
+def task_progress(request):
+    application = InternshipApplication.objects.filter(user=request.user, status='Accepted').order_by('-submitted_at').first()
+    if not application or not application.package:
+        return JsonResponse({'error': 'No accepted application.'}, status=403)
+    category = application.package.category
+    def get_category_tasks(category):
+        if category == 'Technical':
+            return [
+                {'title': 'Design and implement a network topology for a simulated telecom environment.', 'details': 'Use Cisco Packet Tracer or GNS3. Submit your topology file.'},
+                {'title': 'Configure and secure a Cisco router and switch for a branch office.', 'details': 'Document your configuration and upload screenshots.'},
+                {'title': 'Analyze network traffic using Wireshark and report on anomalies.', 'details': 'Upload your analysis report (PDF).'},
+                {'title': 'Develop a disaster recovery plan for NTC’s core network.', 'details': 'Submit a written plan (PDF or DOCX).'},
+                {'title': 'Present a seminar on 5G technology and its impact on telecom infrastructure.', 'details': 'Upload your presentation slides.'}
+            ]
+        elif category == 'Software':
+            return [
+                {'title': 'Build a Django web app to manage internal NTC projects.', 'details': 'Upload your code (ZIP) and a short demo video.'},
+                {'title': 'Develop a REST API for telecom service provisioning.', 'details': 'Submit API documentation and code.'},
+                {'title': 'Automate daily report generation using Python scripts.', 'details': 'Upload your script and a sample report.'},
+                {'title': 'Create a dashboard for real-time monitoring of telecom KPIs.', 'details': 'Upload dashboard screenshots and code.'},
+                {'title': 'Integrate SMS gateway functionality into an existing application.', 'details': 'Submit integration code and a test report.'}
+            ]
+        elif category == 'Admin/HR':
+            return [
+                {'title': 'Design an onboarding process for new NTC interns.', 'details': 'Upload your process document.'},
+                {'title': 'Conduct a survey and analyze employee satisfaction data.', 'details': 'Submit your survey results and analysis.'},
+                {'title': 'Draft a policy for remote work and present to HR.', 'details': 'Upload your policy draft.'},
+                {'title': 'Organize a virtual team-building event and report outcomes.', 'details': 'Submit event plan and feedback summary.'},
+                {'title': 'Prepare a compliance checklist for HR documentation.', 'details': 'Upload your checklist.'}
+            ]
+        else:
+            return []
+    tasks = get_category_tasks(category)
+    if 'task_progress' not in request.session:
+        request.session['task_progress'] = [False] * len(tasks)
+    progress = request.session['task_progress']
+    if request.method == 'POST':
+        idx = int(request.POST.get('task_idx', -1))
+        if 0 <= idx < len(tasks):
+            progress[idx] = not progress[idx]
+            request.session['task_progress'] = progress
+    percent = int(100 * sum(progress) / len(tasks)) if tasks else 0
+    # Add deliverable info
+    deliverables = [None] * len(tasks)
+    for i in range(len(tasks)):
+        d = TaskDeliverable.objects.filter(user=request.user, category=category, task_index=i).order_by('-uploaded_at').first()
+        if d:
+            deliverables[i] = {'file_url': d.file.url, 'uploaded_at': d.uploaded_at.strftime('%Y-%m-%d %H:%M')}
+    return JsonResponse({'tasks': tasks, 'progress': progress, 'percent': percent, 'deliverables': deliverables})
+
+# --- Task Deliverable Upload View ---
+@require_POST
+@login_required
+def upload_deliverable(request):
+    application = InternshipApplication.objects.filter(user=request.user, status='Accepted').order_by('-submitted_at').first()
+    if not application or not application.package:
+        return JsonResponse({'error': 'No accepted application.'}, status=403)
+    category = application.package.category
+    idx = int(request.POST.get('task_idx', -1))
+    file = request.FILES.get('file')
+    if file and 0 <= idx < 5:
+        TaskDeliverable.objects.update_or_create(user=request.user, category=category, task_index=idx, defaults={'file': file})
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid upload.'}, status=400)
+
+def about_internship(request):
+    return render(request, 'internship/about_internship.html') 

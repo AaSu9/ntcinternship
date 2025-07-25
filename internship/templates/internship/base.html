@@ -87,24 +87,21 @@
 <body>
 <nav class="ntc-navbar">
     <div class="ntc-navbar-logo">
-        <img src="{% static 'css/ntc-logo.png' %}" alt="Nepal Telecom Logo">
+        <img src="{% static 'css/NTC_Logo.jpeg' %}" alt="Nepal Telecom Logo">
         <span>Nepal Telecom Internship</span>
     </div>
     <div class="ntc-navbar-links">
         <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
         <a href="/packages/" class="{% if request.path == '/packages/' %}active{% endif %}">Categories</a>
         {% if user.is_authenticated %}
-            <a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a>
             {% with application=latest_application %}
                 {% if application %}
-                    {% if application.status == 'Rejected' or application.status == 'Pending' %}
-                        <a href="/apply/" class="{% if request.path == '/apply/' %}active{% endif %}">Apply</a>
-                    {% endif %}
+                    <a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a>
                     {% if application.status == 'Accepted' %}
-                        <a href="/status/" class="{% if request.path == '/status/' %}active{% endif %}">Status</a>
+                        <a href="/quiz/" class="{% if request.path == '/quiz/' %}active{% endif %}">Quiz Game</a>
                     {% endif %}
                 {% else %}
-                    <a href="/apply/" class="{% if request.path == '/apply/' %}active{% endif %}">Apply</a>
+                    <a href="/about-internship/" class="{% if request.path == '/about-internship/' %}active{% endif %}">About Internship</a>
                 {% endif %}
             {% endwith %}
             {% if user.is_staff %}

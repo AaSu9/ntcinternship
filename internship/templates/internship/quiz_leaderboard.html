@@ -1,0 +1,41 @@
+{% extends 'internship/base.html' %}
+{% block title %}Quiz Leaderboard - {{ category }}{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px;margin:2.5rem auto;">
+    <div class="ntc-card" style="padding:2rem 2.5rem;">
+        <div class="ntc-card-header ntc-card-tech" style="font-size:1.3rem;">Leaderboard: <span style="color:#ffd700;">{{ category }}</span></div>
+        <div class="ntc-card-body">
+            {% if top_scores %}
+                <table style="width:100%;border-collapse:collapse;margin-top:1.2rem;">
+                    <thead>
+                        <tr style="background:#e0e7ff;color:#003366;font-weight:700;">
+                            <th style="padding:0.7rem 0.5rem;text-align:left;">Rank</th>
+                            <th style="padding:0.7rem 0.5rem;text-align:left;">Name</th>
+                            <th style="padding:0.7rem 0.5rem;text-align:left;">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in top_scores %}
+                        <tr style="background:{% if forloop.counter0|divisibleby:2 %}#f8fafc{% else %}#fff{% endif %};">
+                            <td style="padding:0.6rem 0.5rem;font-weight:600;">{{ forloop.counter }}</td>
+                            <td style="padding:0.6rem 0.5rem;">{{ entry.user.profile.full_name|default:entry.user.username }}</td>
+                            <td style="padding:0.6rem 0.5rem;">{{ entry.score }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="text-align:center;font-size:1.1rem;">No scores yet for this category. Be the first to play!</div>
+            {% endif %}
+            <div style="text-align:center;margin-top:1.5rem;">
+                <a href="/quiz/" class="ntc-card-btn">Play Quiz</a>
+                <a href="/dashboard/" class="ntc-card-btn" style="margin-left:1rem;">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.ntc-card-header span { font-weight:700; }
+.ntc-card-btn { margin-top:0.7rem; }
+</style>
+{% endblock %} 

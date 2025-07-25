@@ -14,4 +14,9 @@ urlpatterns = [
     path('attendance/', views.attendance_calendar, name='attendance'),
     path('user-checkin/', views.user_checkin, name='user_checkin'),
     path('profile/', views.profile_update, name='profile_update'),
+    path('quiz/', views.quiz_game, name='quiz_game'),
+    path('quiz/leaderboard/<str:category>/', views.quiz_leaderboard, name='quiz_leaderboard'),
+    path('tasks/', views.task_progress, name='task_progress'),
+    path('tasks/upload/', views.upload_deliverable, name='upload_deliverable'),
+    path('about-internship/', views.about_internship, name='about_internship'),
 ] 
