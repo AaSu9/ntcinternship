@@ -1,0 +1,167 @@
+{% extends 'internship/base.html' %}
+{% load static %}
+{% block title %}Nepal Telecom Internship - Home{% endblock %}
+{% block content %}
+<div class="ntc-hero">
+    <div class="ntc-hero-content">
+        <h1>Launch Your Career with <span class="ntc-hero-highlight">Nepal Telecom</span></h1>
+        <p>Paid internships in technical, software, and admin/HR roles. Real projects, real mentors, real impact.</p>
+        <a href="/register/" class="ntc-btn ntc-hero-cta">Get Started</a>
+    </div>
+    <div class="ntc-hero-image">
+        <img src="{% static 'css/ntc-hero.svg' %}" alt="Internship Hero" style="max-width:340px;width:100%;">
+    </div>
+</div>
+<div class="ntc-section ntc-section-cards">
+    <h2 class="ntc-section-title">Internship Categories</h2>
+    <div class="ntc-card-row-flex">
+        <div class="ntc-card">
+            <div class="ntc-card-header ntc-card-tech">Technical Internship</div>
+            <div class="ntc-card-body">
+                <div class="ntc-card-row"><b>Duration:</b> 3 months</div>
+                <div class="ntc-card-row"><b>Tasks:</b> Network setup, field visits, telecom hardware, troubleshooting</div>
+                <div class="ntc-card-row"><b>About:</b> Work with NTC's core technical team on real telecom infrastructure and learn from industry experts.</div>
+            </div>
+            <a href="/packages/#Technical" class="ntc-card-btn">View Details</a>
+        </div>
+        <div class="ntc-card">
+            <div class="ntc-card-header ntc-card-soft">Software Internship</div>
+            <div class="ntc-card-body">
+                <div class="ntc-card-row"><b>Duration:</b> 3 months</div>
+                <div class="ntc-card-row"><b>Tasks:</b> Python/Django projects, web apps, automation, data analysis</div>
+                <div class="ntc-card-row"><b>About:</b> Join the software team to build and maintain NTC's digital services and internal tools.</div>
+            </div>
+            <a href="/packages/#Software" class="ntc-card-btn">View Details</a>
+        </div>
+        <div class="ntc-card">
+            <div class="ntc-card-header ntc-card-admin">Admin/HR Internship</div>
+            <div class="ntc-card-body">
+                <div class="ntc-card-row"><b>Duration:</b> 2 months</div>
+                <div class="ntc-card-row"><b>Tasks:</b> HR support, documentation, event management, office admin</div>
+                <div class="ntc-card-row"><b>About:</b> Learn how a large organization runs, support HR and admin teams, and help with daily operations.</div>
+            </div>
+            <a href="/packages/#AdminHR" class="ntc-card-btn">View Details</a>
+        </div>
+    </div>
+</div>
+<div class="ntc-section ntc-section-testimonials">
+    <h2 class="ntc-section-title">What Our Interns Say</h2>
+    <div class="ntc-testimonial-row">
+        <div class="ntc-testimonial">
+            <div class="ntc-testimonial-quote">“The NTC internship gave me real-world experience and a job offer!”</div>
+            <div class="ntc-testimonial-author">— Sita, Software Intern</div>
+        </div>
+        <div class="ntc-testimonial">
+            <div class="ntc-testimonial-quote">“I worked on live telecom projects and learned from the best.”</div>
+            <div class="ntc-testimonial-author">— Ram, Technical Intern</div>
+        </div>
+        <div class="ntc-testimonial">
+            <div class="ntc-testimonial-quote">“Great mentors, great benefits, and a great team!”</div>
+            <div class="ntc-testimonial-author">— Anju, Admin/HR Intern</div>
+        </div>
+    </div>
+</div>
+<style>
+.ntc-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #e0e7ff 60%, #fff 100%);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,51,102,0.10);
+    padding: 2.5rem 2.2rem 2.5rem 2.2rem;
+    margin: 2.5rem auto 2.5rem auto;
+    max-width: 1100px;
+    gap: 2.5rem;
+}
+.ntc-hero-content h1 {
+    font-size: 2.7rem;
+    color: #003366;
+    font-weight: 900;
+    margin-bottom: 0.7rem;
+    letter-spacing: 1.2px;
+}
+.ntc-hero-highlight {
+    color: #ffd700;
+    background: #003366;
+    border-radius: 8px;
+    padding: 0.1rem 0.7rem;
+    margin-left: 0.3rem;
+}
+.ntc-hero-content p {
+    font-size: 1.18rem;
+    color: #00509e;
+    margin-bottom: 1.2rem;
+}
+.ntc-hero-cta {
+    font-size: 1.15rem;
+    padding: 0.8rem 2.2rem;
+    margin-top: 1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,80,158,0.10);
+}
+.ntc-hero-image {
+    flex: 0 0 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ntc-section {
+    max-width: 1100px;
+    margin: 2.5rem auto 0 auto;
+}
+.ntc-section-title {
+    text-align: center;
+    color: #003366;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+}
+.ntc-card-row-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.2rem;
+    justify-content: center;
+}
+.ntc-testimonial-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.2rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+}
+.ntc-testimonial {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,51,102,0.08);
+    padding: 1.5rem 2rem;
+    max-width: 340px;
+    min-width: 260px;
+    font-size: 1.08rem;
+    color: #003366;
+    font-style: italic;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 1.5px solid #e0e7ff;
+}
+.ntc-testimonial-quote {
+    margin-bottom: 0.7rem;
+    font-size: 1.13rem;
+    color: #00509e;
+}
+.ntc-testimonial-author {
+    font-weight: 700;
+    color: #003366;
+    font-size: 1.01rem;
+}
+@media (max-width: 900px) {
+    .ntc-hero { flex-direction: column; gap: 1.5rem; padding: 1.2rem 0.7rem; }
+    .ntc-hero-image { flex: 0 0 180px; }
+    .ntc-section { padding: 0 0.5rem; }
+    .ntc-card-row-flex { flex-direction: column; align-items: center; }
+    .ntc-testimonial-row { flex-direction: column; align-items: center; }
+}
+</style>
+{% endblock %} 

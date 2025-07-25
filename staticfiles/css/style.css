@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+h1, h2 {
+    text-align: center;
+    color: #003366;
+}
+form label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+form input, form select, form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+form input[type="file"] {
+    padding: 0.2rem;
+}
+button, input[type="submit"] {
+    background: #003366;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 4px;
+    margin-top: 1.2rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+button:hover, input[type="submit"]:hover {
+    background: #00509e;
+}
+.status {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+}
+.success {
+    color: #28a745;
+}
+.error {
+    color: #dc3545;
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+        max-width: 98vw;
+    }
+} 

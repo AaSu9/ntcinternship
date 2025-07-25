@@ -1,0 +1,100 @@
+{% extends 'internship/base.html' %}
+{% block title %}Edit Profile - Nepal Telecom Internship{% endblock %}
+{% block content %}
+<div class="container" style="max-width:500px;margin:2.5rem auto;">
+    <h1 style="text-align:center; margin-bottom:1.2rem;">Edit Profile</h1>
+    <form method="post" enctype="multipart/form-data" autocomplete="off" class="ntc-profile-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ u_form.username }}
+            <label for="id_username">Phone or Email</label>
+            {% if u_form.username.errors %}<div class="error">{{ u_form.username.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ u_form.email }}
+            <label for="id_email">Email</label>
+            {% if u_form.email.errors %}<div class="error">{{ u_form.email.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ p_form.full_name }}
+            <label for="id_full_name">Full Name</label>
+            {% if p_form.full_name.errors %}<div class="error">{{ p_form.full_name.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ p_form.university_college }}
+            <label for="id_university_college">University/College</label>
+            {% if p_form.university_college.errors %}<div class="error">{{ p_form.university_college.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ p_form.program_year }}
+            <label for="id_program_year">Program/Year</label>
+            {% if p_form.program_year.errors %}<div class="error">{{ p_form.program_year.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ p_form.profile_photo }}
+            <label for="id_profile_photo">Profile Photo</label>
+            {% if p_form.profile_photo.errors %}<div class="error">{{ p_form.profile_photo.errors|striptags }}</div>{% endif %}
+        </div>
+        <input type="submit" value="Save Changes">
+    </form>
+    <div style="text-align:center; margin-top:1.5rem;">
+        <a href="/dashboard/" class="ntc-card-btn">Back to Dashboard</a>
+    </div>
+</div>
+<style>
+.ntc-profile-form .form-group {
+    margin-bottom: 1.2rem;
+    position: relative;
+}
+.ntc-profile-form label {
+    position: absolute;
+    left: 0.7rem;
+    top: -1.1rem;
+    color: #00509e;
+    font-size: 0.98rem;
+    font-weight: 500;
+    background: #f8fafc;
+    padding: 0 0.3rem;
+    border-radius: 4px;
+}
+.ntc-profile-form input[type="text"],
+.ntc-profile-form input[type="email"],
+.ntc-profile-form input[type="file"] {
+    width: 100%;
+    padding: 0.7rem 0.7rem;
+    border: 1.5px solid #e0e7ff;
+    border-radius: 7px;
+    font-size: 1.08rem;
+    background: #fff;
+    margin-top: 0.3rem;
+    transition: border 0.18s;
+}
+.ntc-profile-form input[type="text"]:focus,
+.ntc-profile-form input[type="email"]:focus {
+    border: 1.5px solid #00509e;
+    outline: none;
+}
+.ntc-profile-form input[type="submit"] {
+    background: linear-gradient(90deg, #00509e 60%, #003366 100%);
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    border-radius: 7px;
+    padding: 0.7rem 2.2rem;
+    font-size: 1.12rem;
+    margin-top: 0.7rem;
+    box-shadow: 0 2px 8px rgba(0,80,158,0.10);
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.ntc-profile-form input[type="submit"]:hover {
+    background: linear-gradient(90deg, #003366 60%, #00509e 100%);
+    color: #ffd700;
+    box-shadow: 0 4px 16px rgba(0,80,158,0.13);
+}
+.error {
+    color: #dc3545;
+    font-size: 0.97rem;
+    margin-top: 0.2rem;
+}
+</style>
+{% endblock %} 

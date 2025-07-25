@@ -1,0 +1,21 @@
+{% extends 'internship/base.html' %}
+{% block title %}Login - Nepal Telecom Internship{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 style="text-align:center; margin-bottom:1.2rem;">Login</h1>
+    <form method="post" autocomplete="off">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            {{ field }}
+            <label for="id_{{ field.name }}">{{ field.label }}</label>
+            {% if field.errors %}<div class="error">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <input type="submit" value="Login">
+    </form>
+    <p style="text-align:center; margin-top:1rem;">
+        Don't have an account? <a href="/register/">Register</a>
+    </p>
+</div>
+{% endblock %} 

@@ -1,0 +1,412 @@
+{% extends 'internship/base.html' %}
+{% block title %}Dashboard - Nepal Telecom Internship{% endblock %}
+{% block content %}
+<div class="container" style="max-width:1100px; margin:2rem auto;">
+    <div class="ntc-dashboard-flex">
+        <div class="ntc-profile-card">
+            <div class="ntc-profile-photo">
+                {% if profile.profile_photo %}
+                    <img src="{{ profile.profile_photo.url }}" alt="Profile Photo">
+                {% else %}
+                    <span class="ntc-profile-placeholder">{{ profile.full_name|slice:":1"|upper }}</span>
+                {% endif %}
+            </div>
+            <div class="ntc-profile-info">
+                <div class="ntc-profile-name">{{ profile.full_name|default:user.username }}</div>
+                <div class="ntc-profile-email">{{ user.email }}</div>
+                <div class="ntc-profile-meta">{{ profile.university_college }} | {{ profile.program_year }}</div>
+            </div>
+            <a href="/profile/" class="ntc-profile-edit">Edit Profile</a>
+        </div>
+        <div class="ntc-dashboard-main">
+            {% if messages %}
+                <div class="ntc-messages">
+                    {% for message in messages %}
+                        <div class="ntc-message ntc-message-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <h1 style="margin-bottom:1.2rem;">Welcome, {{ profile.full_name|default:user.username }}!</h1>
+            {% if not accepted %}
+                <div class="ntc-onboarding-checklist" style="max-width:500px;margin:0 auto 2rem auto;">
+                    <div class="ntc-onboarding-step {% if show_apply %}ntc-onboarding-active{% elif pending or rejected %}ntc-onboarding-done{% endif %}">1. Apply for Internship</div>
+                    <div class="ntc-onboarding-step {% if pending %}ntc-onboarding-active{% elif rejected %}ntc-onboarding-done{% endif %}">2. Await Admin Approval</div>
+                    <div class="ntc-onboarding-step">3. Access Internship Features</div>
+                </div>
+            {% endif %}
+            {% if show_apply %}
+                <div class="ntc-card ntc-status-card ntc-status-apply">
+                    <div class="ntc-card-header ntc-card-soft">Apply for Internship</div>
+                    <div class="ntc-card-body">
+                        <p style="margin-bottom:1rem;">You have not applied for any internship yet. Please fill out the application form to get started.</p>
+                        <a href="/apply/" class="ntc-card-btn">Apply Now</a>
+                    </div>
+                </div>
+            {% elif pending %}
+                <div class="ntc-card ntc-status-card ntc-status-pending">
+                    <div class="ntc-card-header ntc-card-tech">Application Pending</div>
+                    <div class="ntc-card-body">
+                        <p>Your application is under review. Please wait for admin approval.</p>
+                    </div>
+                </div>
+            {% elif rejected %}
+                <div class="ntc-card ntc-status-card ntc-status-rejected">
+                    <div class="ntc-card-header ntc-card-admin">Application Rejected</div>
+                    <div class="ntc-card-body">
+                        <p>Sorry, your application was not accepted. You may <a href="/apply/">re-apply</a> for another internship.</p>
+                    </div>
+                </div>
+            {% elif accepted %}
+                <div class="ntc-card ntc-status-card ntc-status-accepted">
+                    <div class="ntc-card-header ntc-card-tech">Congratulations! You are Accepted</div>
+                    <div class="ntc-card-body">
+                        <p>Welcome to the NTC Internship Program. Explore your dashboard for attendance, benefits, and more.</p>
+                    </div>
+                </div>
+                <div style="margin:1.5rem 0;text-align:center;">
+                    {% if can_checkin %}
+                        <form method="post" action="/user-checkin/">
+                            {% csrf_token %}
+                            <button type="submit" class="ntc-card-btn" style="font-size:1.1rem;">Check In for Today</button>
+                        </form>
+                    {% else %}
+                        <div style="color:#28a745;font-weight:600;">You have checked in for today!</div>
+                    {% endif %}
+                </div>
+                <div class="ntc-dashboard-cards-flex">
+                    <div class="ntc-card" style="flex:1 1 340px;min-width:320px;max-width:400px;">
+                        <div class="ntc-card-header ntc-card-tech">Internship Details</div>
+                        <div class="ntc-card-body">
+                            <div class="ntc-card-row"><b>Category:</b> {{ package.name }}</div>
+                            <div class="ntc-card-row"><b>Duration:</b> {{ package.period }}</div>
+                            <div class="ntc-card-row"><b>About:</b> {{ package.description }}</div>
+                            <div class="ntc-card-row"><b>Tasks:</b> {{ package.eligibility }}</div>
+                        </div>
+                    </div>
+                    <div class="ntc-card" style="flex:1 1 340px;min-width:320px;max-width:400px;">
+                        <div class="ntc-card-header ntc-card-soft">Internship Benefits</div>
+                        <div class="ntc-card-body">
+                            <div class="ntc-benefit-grid">
+                                <div class="ntc-benefit-card">
+                                    <div class="ntc-benefit-icon">🍱</div>
+                                    <div class="ntc-benefit-title">Lunch</div>
+                                    <div class="ntc-benefit-desc">Free lunch provided daily at NTC canteen.</div>
+                                </div>
+                                <div class="ntc-benefit-card">
+                                    <div class="ntc-benefit-icon">📶</div>
+                                    <div class="ntc-benefit-title">Data/Voice Pack</div>
+                                    <div class="ntc-benefit-desc">Monthly data and voice pack for all interns.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ntc-card" style="flex:1 1 340px;min-width:320px;max-width:400px;align-items:center;justify-content:center;">
+                        <div class="ntc-card-header ntc-card-admin">Intern Card & QR</div>
+                        <div class="ntc-card-body" style="display:flex;flex-direction:column;align-items:center;gap:1.1rem;">
+                            {% if profile.profile_photo %}
+                                <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" style="width:110px;height:110px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,51,102,0.13);">
+                            {% else %}
+                                <form method="post" enctype="multipart/form-data" style="margin-bottom:0.7rem;">
+                                    {% csrf_token %}
+                                    {{ profile_photo_form.profile_photo }}
+                                    <button type="submit" class="ntc-card-btn" style="margin-top:0.5rem;">Upload Photo</button>
+                                </form>
+                            {% endif %}
+                            <div style="margin-top:0.5rem;">
+                                <img src="data:image/png;base64,{{ qr_img_b64 }}" alt="QR Code" style="width:110px;height:110px;">
+                                <div style="font-size:0.97rem;color:#003366;margin-top:0.3rem;">Scan to verify: <b>ID {{ user.id }}</b></div>
+                                <a href="data:image/png;base64,{{ qr_img_b64 }}" download="ntc_intern_qr.png" class="ntc-card-btn" style="margin-top:0.5rem;">Download QR</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ntc-card" style="margin:2.5rem auto 0 auto;max-width:700px;">
+                    <div class="ntc-card-header ntc-card-admin">Attendance Calendar <span style="font-weight:400;font-size:0.97rem;float:right;"><a href="/attendance/" style="color:#00509e;text-decoration:underline;">Full Attendance &rarr;</a></span></div>
+                    <div class="ntc-card-body">
+                        <h3 style="text-align:center; margin-bottom:1rem;">{{ month }} {{ year }}</h3>
+                        <div class="ntc-mini-calendar">
+                            <div class="ntc-mini-calendar-row ntc-mini-calendar-header">
+                                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                            </div>
+                            {% for week in calendar_weeks %}
+                            <div class="ntc-mini-calendar-row">
+                                {% for day in week %}
+                                    {% if day %}
+                                        <div class="ntc-mini-calendar-cell {% if day.present %}ntc-mini-present{% elif day.is_past %}ntc-mini-absent{% endif %}">
+                                            {% if day.present %}
+                                                &#10003;
+                                            {% elif day.is_past %}
+                                                &#10007;
+                                            {% else %}
+                                                &nbsp;
+                                            {% endif %}
+                                            <span class="ntc-mini-date">{{ day.date|date:"j" }}</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="ntc-mini-calendar-cell ntc-mini-empty"></div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div style="margin-top:0.7rem;font-size:0.97rem;color:#7a869a;text-align:center;">
+                            Green = Present, Red = Absent, Blank = Future<br>
+                            <b>Total Present:</b> {{ total_present }} &nbsp;|&nbsp; <b>Total Absent:</b> {{ total_absent }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<style>
+.ntc-dashboard-flex {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.ntc-profile-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,51,102,0.10);
+    padding: 2rem 1.5rem;
+    min-width: 260px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    border: 1.5px solid #e0e7ff;
+}
+.ntc-profile-photo img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,51,102,0.13);
+}
+.ntc-profile-placeholder {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    color: #003366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,51,102,0.13);
+}
+.ntc-profile-info {
+    margin-top: 1rem;
+    text-align: center;
+}
+.ntc-profile-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #003366;
+    margin-bottom: 0.2rem;
+}
+.ntc-profile-email {
+    color: #00509e;
+    font-size: 1.01rem;
+    margin-bottom: 0.2rem;
+}
+.ntc-profile-meta {
+    color: #7a869a;
+    font-size: 0.97rem;
+}
+.ntc-profile-edit {
+    margin-top: 1.2rem;
+    color: #00509e;
+    font-weight: 600;
+    text-decoration: underline;
+    font-size: 1.01rem;
+    transition: color 0.18s;
+}
+.ntc-profile-edit:hover {
+    color: #003366;
+}
+.ntc-dashboard-main {
+    flex: 1 1 500px;
+    min-width: 320px;
+}
+.ntc-dashboard-cards-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.2rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+}
+.ntc-status-card {
+    margin-bottom: 2rem;
+}
+.ntc-status-apply .ntc-card-header { background: linear-gradient(90deg, #00b4d8 60%, #00509e 100%); }
+.ntc-status-pending .ntc-card-header { background: linear-gradient(90deg, #00509e 60%, #003366 100%); }
+.ntc-status-rejected .ntc-card-header { background: linear-gradient(90deg, #fbb034 60%, #ffdd00 100%); color: #003366; }
+.ntc-status-accepted .ntc-card-header { background: linear-gradient(90deg, #28a745 60%, #003366 100%); }
+@media (max-width: 900px) {
+    .ntc-dashboard-flex { flex-direction: column; gap: 1.5rem; }
+    .ntc-dashboard-main { min-width: 0; }
+    .ntc-dashboard-cards-flex { flex-direction: column; align-items: center; }
+}
+.ntc-benefit-grid {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+.ntc-benefit-card {
+    background: #e0e7ff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,80,158,0.08);
+    padding: 1.1rem 1.5rem;
+    min-width: 120px;
+    text-align: center;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+.ntc-benefit-card:hover {
+    box-shadow: 0 8px 24px rgba(0,80,158,0.13);
+    transform: translateY(-4px) scale(1.04);
+}
+.ntc-benefit-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.3rem;
+}
+.ntc-benefit-title {
+    font-weight: 700;
+    color: #003366;
+    margin-bottom: 0.2rem;
+    font-size: 1.08rem;
+}
+.ntc-benefit-desc {
+    color: #00509e;
+    font-size: 0.97rem;
+}
+@media (max-width: 900px) {
+    .ntc-benefit-grid { flex-direction: column; align-items: center; }
+}
+.ntc-onboarding-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+.ntc-onboarding-step {
+    background: #e0e7ff;
+    color: #003366;
+    border-radius: 7px;
+    padding: 0.6rem 1.1rem;
+    font-weight: 500;
+    font-size: 1.04rem;
+    box-shadow: 0 2px 8px rgba(0,80,158,0.08);
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.ntc-onboarding-active {
+    background: #ffd700;
+    color: #003366;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(255,215,0,0.13);
+}
+.ntc-onboarding-done {
+    background: #b2f2bb;
+    color: #003366;
+    font-weight: 700;
+}
+.ntc-card, .ntc-card-btn {
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+.ntc-card:hover {
+    box-shadow: 0 12px 32px rgba(0,80,158,0.13), 0 4px 24px rgba(0,51,102,0.10);
+    transform: translateY(-7px) scale(1.03);
+}
+.ntc-card-btn:hover {
+    background: linear-gradient(90deg, #00509e 60%, #003366 100%);
+    color: #e0e7ff;
+    box-shadow: 0 4px 16px rgba(0,80,158,0.13);
+    transform: translateY(-2px) scale(1.04);
+}
+.ntc-messages {
+    margin-bottom: 1.2rem;
+}
+.ntc-message {
+    padding: 0.8rem 1.2rem;
+    border-radius: 7px;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+.ntc-message-success {
+    background: #b2f2bb;
+    color: #155724;
+    border: 1.5px solid #28a745;
+}
+.ntc-message-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1.5px solid #dc3545;
+}
+.ntc-mini-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 1rem 0.5rem 0.7rem 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,80,158,0.07);
+    max-width: 420px;
+    margin: 0 auto;
+}
+.ntc-mini-calendar-row {
+    display: flex;
+    gap: 0.2rem;
+}
+.ntc-mini-calendar-header > div {
+    flex: 1 1 0;
+    text-align: center;
+    font-weight: 700;
+    color: #00509e;
+    font-size: 1.01rem;
+    padding-bottom: 0.2rem;
+}
+.ntc-mini-calendar-cell {
+    flex: 1 1 0;
+    min-width: 32px;
+    min-height: 32px;
+    background: #fff;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1.2px solid #e0e7ff;
+    color: #003366;
+}
+.ntc-mini-present {
+    background: #b2f2bb;
+    color: #155724;
+    font-weight: 700;
+}
+.ntc-mini-absent {
+    background: #f8d7da;
+    color: #721c24;
+    font-weight: 700;
+}
+.ntc-mini-empty {
+    background: transparent;
+    border: none;
+}
+.ntc-mini-date {
+    font-size: 0.75rem;
+    color: #7a869a;
+    position: absolute;
+    bottom: 3px;
+    right: 5px;
+}
+</style>
+{% endblock %} 

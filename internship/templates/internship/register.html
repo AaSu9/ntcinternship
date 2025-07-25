@@ -1,0 +1,86 @@
+{% extends 'internship/base.html' %}
+{% block title %}Register - Nepal Telecom Internship{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 style="text-align:center; margin-bottom:1.2rem;">Register</h1>
+    <form method="post" autocomplete="off" style="max-width:400px;margin:0 auto;">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.phone }}
+            <label for="id_phone">Phone Number</label>
+            {% if form.phone.errors %}<div class="error">{{ form.phone.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.email }}
+            <label for="id_email">Email</label>
+            {% if form.email.errors %}<div class="error">{{ form.email.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.full_name }}
+            <label for="id_full_name">Full Name</label>
+            {% if form.full_name.errors %}<div class="error">{{ form.full_name.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.university }}
+            <label for="id_university">University</label>
+        </div>
+        <div class="form-group">
+            {{ form.college_name }}
+            <label for="id_college_name">College Name</label>
+        </div>
+        <div class="form-group">
+            {{ form.program }}
+            <label for="id_program">Program</label>
+        </div>
+        <div class="form-group">
+            {{ form.year }}
+            <label for="id_year">Year</label>
+        </div>
+        <div class="form-group">
+            {{ form.password1 }}
+            <label for="id_password1">Password</label>
+        </div>
+        <div class="form-group">
+            {{ form.password2 }}
+            <label for="id_password2">Confirm Password</label>
+        </div>
+        <div class="form-group" style="margin-bottom:1.2rem;">
+            <input type="checkbox" id="show-password" onclick="togglePassword()"> <label for="show-password" style="font-weight:500;cursor:pointer;">Show Password</label>
+        </div>
+        <input type="submit" value="Register">
+    </form>
+    <p style="text-align:center; margin-top:1rem;">
+        Already have an account? <a href="/login/">Login</a>
+    </p>
+</div>
+<script>
+function togglePassword() {
+    var pw1 = document.getElementById('id_password1');
+    var pw2 = document.getElementById('id_password2');
+    var type = pw1.type === 'password' ? 'text' : 'password';
+    pw1.type = type;
+    pw2.type = type;
+}
+</script>
+<style>
+.ntc-password-group { position: relative; }
+.ntc-showpass-checkbox { display: none; }
+.ntc-showpass-label {
+    position: absolute;
+    right: 1.2rem;
+    top: 1.2rem;
+    color: #00509e;
+    font-size: 0.98rem;
+    font-weight: 500;
+    cursor: pointer;
+    background: #e0e7ff;
+    border-radius: 5px;
+    padding: 0.2rem 0.7rem;
+    transition: background 0.18s, color 0.18s;
+}
+.ntc-showpass-checkbox:checked + .ntc-showpass-label {
+    background: #003366;
+    color: #fff;
+}
+</style>
+{% endblock %} 

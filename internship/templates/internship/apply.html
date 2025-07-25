@@ -1,0 +1,80 @@
+{% extends 'internship/base.html' %}
+{% block title %}Apply - Nepal Telecom Internship{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 style="text-align:center; margin-bottom:1.2rem;">Internship Application</h1>
+    {% if not user.is_authenticated %}
+        <div class="status error">You must <a href="/login/">login</a> to apply for an internship.</div>
+    {% else %}
+        {% if submitted %}
+            <div class="status success">
+                <p>Your application has been submitted successfully!</p>
+                {% if application_id %}
+                    <p>Your Application ID: <strong>{{ application_id }}</strong></p>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if messages %}
+            <div class="ntc-messages">
+                {% for message in messages %}
+                    <div class="ntc-message ntc-message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-group">
+                {% if locked_package %}
+                    <input type="hidden" name="package" value="{{ form.package.value }}">
+                    <input type="text" value="{{ locked_package_name }}" class="form-input" disabled>
+                    <label for="id_package">Internship Package</label>
+                {% else %}
+                    {{ form.package }}
+                    <label for="id_package">Internship Package</label>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.gpa_or_marks }}
+                <label for="id_gpa_or_marks">GPA or Marks</label>
+            </div>
+            <div class="form-group">
+                {{ form.area_of_interest }}
+                <label for="id_area_of_interest">Internship Area of Interest</label>
+            </div>
+            <div class="form-group">
+                {{ form.resume }}
+                <label for="id_resume">Resume (PDF only)</label>
+            </div>
+            <input type="submit" value="Apply">
+        </form>
+        <div style="margin-top:1.2rem; color:#00509e; font-size:1.01rem; text-align:center;">
+            <b>Note:</b> Your name, email, phone, university, and program/year will be taken from your profile.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        .ntc-messages {
+            margin-bottom: 1.2rem;
+        }
+        .ntc-message {
+            padding: 0.8rem 1.2rem;
+            border-radius: 7px;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .ntc-message-success {
+            background: #b2f2bb;
+            color: #155724;
+            border: 1.5px solid #28a745;
+        }
+        .ntc-message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1.5px solid #dc3545;
+        }
+    </style>
+{% endblock %} 

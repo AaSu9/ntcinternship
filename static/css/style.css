@@ -1,0 +1,190 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    position: relative;
+}
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    height: 400px;
+    background: url('/static/css/ntc-logo.png') no-repeat center center;
+    background-size: contain;
+    opacity: 0.07;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+.container {
+    max-width: 480px;
+    margin: 48px auto;
+    background: #fff;
+    padding: 2.5rem 2rem 2rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(0, 51, 102, 0.10), 0 1.5px 4px rgba(0,0,0,0.04);
+    position: relative;
+    z-index: 1;
+}
+header img.ntc-logo {
+    display: block;
+    margin: 0 auto 0.5rem auto;
+    height: 56px;
+    width: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,51,102,0.08);
+    padding: 0.3rem 0.7rem;
+}
+h1, h2 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+}
+form {
+    margin-top: 1rem;
+}
+.form-group {
+    position: relative;
+    margin-bottom: 1.7rem;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 1.1rem 0.9rem 0.5rem 0.9rem;
+    border: 1.5px solid #b6c3d1;
+    border-radius: 6px;
+    background: none;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #00509e;
+}
+.form-group label {
+    position: absolute;
+    left: 0.95rem;
+    top: 1.1rem;
+    background: #fff;
+    color: #7a869a;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: 0.2s cubic-bezier(.4,0,.2,1);
+    padding: 0 0.2rem;
+}
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group select:focus + label,
+.form-group select:not([value=""]) + label,
+.form-group textarea:focus + label,
+.form-group textarea:not(:placeholder-shown) + label {
+    top: -0.7rem;
+    left: 0.7rem;
+    font-size: 0.92rem;
+    color: #00509e;
+    background: #fff;
+    padding: 0 0.3rem;
+}
+input[type="file"] {
+    padding: 0.5rem 0.2rem;
+    background: #f4f6fb;
+    border-radius: 6px;
+    border: 1.5px solid #b6c3d1;
+}
+input[type="submit"], button {
+    background: linear-gradient(90deg, #003366 60%, #00509e 100%);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 1.7rem;
+    border-radius: 6px;
+    margin-top: 1.2rem;
+    cursor: pointer;
+    font-size: 1.08rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,80,158,0.08);
+    transition: background 0.2s;
+}
+input[type="submit"]:hover, button:hover {
+    background: linear-gradient(90deg, #00509e 60%, #003366 100%);
+}
+.status {
+    text-align: center;
+    font-size: 1.15rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0.5rem;
+    border-radius: 8px;
+}
+.success {
+    color: #28a745;
+    background: #eafaf1;
+    border: 1px solid #b6e2cc;
+}
+.error {
+    color: #dc3545;
+    background: #fff0f1;
+    border: 1px solid #f5bfc2;
+}
+a {
+    color: #00509e;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #003366;
+    text-decoration: underline;
+}
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23003366" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 1.2em;
+    padding-right: 2.2em;
+    cursor: pointer;
+}
+.form-group select:focus {
+    border-color: #00509e;
+}
+.form-group select + label {
+    top: 1.1rem;
+    left: 0.95rem;
+}
+.form-group select:focus + label,
+.form-group select:not([value=""]) + label {
+    top: -0.7rem;
+    left: 0.7rem;
+    font-size: 0.92rem;
+    color: #00509e;
+    background: #fff;
+    padding: 0 0.3rem;
+}
+.home-btns a {
+    box-shadow: 0 2px 8px rgba(0,80,158,0.08), 0 0px 0px rgba(0,0,0,0.01);
+    transition: background 0.2s, color 0.2s, transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s cubic-bezier(.4,0,.2,1);
+}
+.home-btns a:hover {
+    background: linear-gradient(90deg, #00509e 60%, #003366 100%);
+    color: #e0e7ff;
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(0,80,158,0.13), 0 2px 8px rgba(0,80,158,0.08);
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem 0.3rem;
+        max-width: 99vw;
+    }
+} 
