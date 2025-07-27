@@ -4,25 +4,119 @@
 <div class="container">
     <h1 style="text-align:center; margin-bottom:1.2rem;">Internship Packages</h1>
     {% for category, pkgs in grouped.items %}
-        <h2 style="color:#003366; margin-top:2rem;">{{ category }} Internships</h2>
-        {% if pkgs %}
-            {% for pkg in pkgs %}
-                <div style="background:#f4f8ff; border-radius:8px; padding:1.2rem 1.2rem; margin-bottom:1.2rem; border:1px solid #e0e7ff;">
-                    <h3 style="margin-bottom:0.3rem; color:#00509e;">{{ pkg.name }}</h3>
-                    <p><strong>Description:</strong> {{ pkg.description }}</p>
-                    <p><strong>Eligibility:</strong> {{ pkg.eligibility }}</p>
-                    <p><strong>Period:</strong> {{ pkg.period }}</p>
-                    <p><strong>Seats:</strong> {{ pkg.seats }}</p>
-                    {% if user.is_authenticated %}
-                        <a href="/apply/?package={{ pkg.id }}" style="display:inline-block; margin-top:0.7rem; background:#003366; color:#fff; padding:0.5rem 1.2rem; border-radius:6px; text-decoration:none; font-weight:500;">Apply Now</a>
-                    {% else %}
-                        <span style="color:#dc3545;">Login to apply</span>
-                    {% endif %}
+        <div class="pkg-category-box">
+            <h2 class="pkg-category-title">{{ category }} Internships</h2>
+            {% if pkgs %}
+                <div class="pkg-grid">
+                    {% for pkg in pkgs %}
+                        <div class="pkg-card">
+                            <h3 class="pkg-title">{{ pkg.name }}</h3>
+                            <p><strong>Description:</strong> {{ pkg.description }}</p>
+                            <p><strong>Eligibility:</strong> {{ pkg.eligibility }}</p>
+                            <p><strong>Period:</strong> {{ pkg.period }}</p>
+                            <p><strong>Seats:</strong> {{ pkg.seats }}</p>
+                            {% if user.is_authenticated %}
+                                <a href="/apply/?package={{ pkg.id }}" class="pkg-apply-btn">Apply Now</a>
+                            {% else %}
+                                <span class="pkg-login-msg">Login to apply</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        {% else %}
-            <p style="color:#7a869a;">No packages available in this category.</p>
-        {% endif %}
+            {% else %}
+                <p style="color:#7a869a;">No packages available in this category.</p>
+            {% endif %}
+        </div>
     {% endfor %}
 </div>
+<style>
+.container {
+    max-width: 98vw;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0;
+}
+.pkg-category-box {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 8px 32px rgba(0,51,102,0.10);
+    padding: 3.5rem 5vw 2.5rem 5vw;
+    margin: 2.5rem auto 2.5rem auto;
+    max-width: 1400px;
+    width: 100%;
+}
+.pkg-category-title {
+    color: #003366;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+.pkg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 2.2rem 4rem;
+    justify-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.pkg-card {
+    background: #eaf2ff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,51,102,0.08);
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    min-width: 260px;
+    max-width: 340px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border: 1px solid #e0e7ff;
+    transition: box-shadow 0.15s, transform 0.15s;
+    margin-left: auto;
+    margin-right: auto;
+}
+.pkg-card:hover {
+    box-shadow: 0 8px 32px rgba(0,51,102,0.13);
+    transform: translateY(-6px) scale(1.03);
+}
+.pkg-title {
+    margin-bottom: 0.3rem;
+    color: #00509e;
+    font-size: 1.18rem;
+    font-weight: 700;
+}
+.pkg-apply-btn {
+    display: inline-block;
+    margin-top: 0.7rem;
+    background: #003366;
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.pkg-apply-btn:hover {
+    background: #00509e;
+}
+.pkg-login-msg {
+    color: #dc3545;
+    margin-top: 0.7rem;
+}
+@media (max-width: 1200px) {
+    .pkg-category-box { max-width: 98vw; padding: 2rem 0.5rem; }
+    .pkg-grid { gap: 1.2rem; }
+}
+@media (max-width: 900px) {
+    .pkg-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+    .pkg-grid { grid-template-columns: 1fr; }
+    .pkg-card { max-width: 98vw; min-width: 0; }
+}
+</style>
 {% endblock %} 

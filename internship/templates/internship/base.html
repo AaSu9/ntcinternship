@@ -94,14 +94,17 @@
         <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
         <a href="/packages/" class="{% if request.path == '/packages/' %}active{% endif %}">Categories</a>
         {% if user.is_authenticated %}
+            <a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a>
             {% with application=latest_application %}
                 {% if application %}
-                    <a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a>
+                    {% if application.status == 'Rejected' or application.status == 'Pending' %}
+                        <a href="/apply/" class="{% if request.path == '/apply/' %}active{% endif %}">Apply</a>
+                    {% endif %}
                     {% if application.status == 'Accepted' %}
-                        <a href="/quiz/" class="{% if request.path == '/quiz/' %}active{% endif %}">Quiz Game</a>
+                        <a href="/status/" class="{% if request.path == '/status/' %}active{% endif %}">Status</a>
                     {% endif %}
                 {% else %}
-                    <a href="/about-internship/" class="{% if request.path == '/about-internship/' %}active{% endif %}">About Internship</a>
+                    <a href="/apply/" class="{% if request.path == '/apply/' %}active{% endif %}">Apply</a>
                 {% endif %}
             {% endwith %}
             {% if user.is_staff %}

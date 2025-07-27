@@ -2,15 +2,15 @@
 {% load static %}
 {% block title %}Nepal Telecom Internship - Home{% endblock %}
 {% block content %}
-<div class="ntc-hero">
-    <div class="ntc-hero-content">
-        <h1>Launch Your Career with <span class="ntc-hero-highlight">Nepal Telecom</span></h1>
-        <p>Paid internships in technical, software, and admin/HR roles. Real projects, real mentors, real impact.</p>
-        <a href="/register/" class="ntc-btn ntc-hero-cta">Get Started</a>
-    </div>
-    <div class="ntc-hero-image">
-        <img src="{% static 'css/ntc-hero.svg' %}" alt="Internship Hero" style="max-width:340px;width:100%;">
-    </div>
+<div class="hero-section">
+  <div class="hero-content-box">
+    <h1>
+      Launch Your Career with
+      <span class="ntc-highlight">Nepal Telecom</span>
+    </h1>
+    <p>Paid internships in technical, software, and admin/HR roles. Real projects, real mentors, real impact.</p>
+    <a href="/register/" class="get-started-btn">Get Started</a>
+  </div>
 </div>
 <div class="ntc-section ntc-section-cards">
     <h2 class="ntc-section-title">Internship Categories</h2>
@@ -48,20 +48,79 @@
     <h2 class="ntc-section-title">What Our Interns Say</h2>
     <div class="ntc-testimonial-row">
         <div class="ntc-testimonial">
+            <img class="ntc-testimonial-avatar" src="https://ui-avatars.com/api/?name=Sita&background=0a2259&color=fff&size=96" alt="Sita avatar">
             <div class="ntc-testimonial-quote">“The NTC internship gave me real-world experience and a job offer!”</div>
-            <div class="ntc-testimonial-author">— Sita, Software Intern</div>
+            <div class="ntc-testimonial-author">— <b>Sita</b>, Software Intern</div>
         </div>
         <div class="ntc-testimonial">
+            <img class="ntc-testimonial-avatar" src="https://ui-avatars.com/api/?name=Ram&background=00509e&color=fff&size=96" alt="Ram avatar">
             <div class="ntc-testimonial-quote">“I worked on live telecom projects and learned from the best.”</div>
-            <div class="ntc-testimonial-author">— Ram, Technical Intern</div>
+            <div class="ntc-testimonial-author">— <b>Ram</b>, Technical Intern</div>
         </div>
         <div class="ntc-testimonial">
+            <img class="ntc-testimonial-avatar" src="https://ui-avatars.com/api/?name=Anju&background=ffd700&color=0a2259&size=96" alt="Anju avatar">
             <div class="ntc-testimonial-quote">“Great mentors, great benefits, and a great team!”</div>
-            <div class="ntc-testimonial-author">— Anju, Admin/HR Intern</div>
+            <div class="ntc-testimonial-author">— <b>Anju</b>, Admin/HR Intern</div>
         </div>
     </div>
 </div>
 <style>
+.hero-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  margin: 2rem auto;
+  max-width: 100vw;
+}
+.hero-content-box {
+  background: linear-gradient(120deg, #e0e7ff 0%, #f0f4ff 100%);
+  border-radius: 24px;
+  padding: 3rem 2rem 2.5rem 2rem;
+  box-shadow: 0 8px 32px rgba(60, 80, 180, 0.10);
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+.hero-content-box h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #0a2259;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+.ntc-highlight {
+  display: inline-block;
+  background: #ffe066;
+  color: #0a2259;
+  border-radius: 12px;
+  padding: 0.2em 0.7em;
+  margin-left: 0.5em;
+  font-weight: 900;
+  font-size: 1.1em;
+  box-shadow: 0 2px 8px rgba(255, 224, 102, 0.2);
+}
+.hero-content-box p {
+  font-size: 1.2rem;
+  color: #2d3a5a;
+  margin-bottom: 2rem;
+}
+.get-started-btn {
+  display: inline-block;
+  background: #0a2259;
+  color: #fff;
+  padding: 0.8em 2em;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(10, 34, 89, 0.08);
+  transition: background 0.2s;
+}
+.get-started-btn:hover {
+  background: #1c3a7a;
+}
 .ntc-hero {
     display: flex;
     align-items: center;
@@ -120,9 +179,11 @@
 }
 .ntc-card-row-flex {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 2.2rem;
     justify-content: center;
+    overflow-x: auto;
+    padding-bottom: 1rem;
 }
 .ntc-testimonial-row {
     display: flex;
@@ -133,35 +194,110 @@
 }
 .ntc-testimonial {
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0,51,102,0.08);
-    padding: 1.5rem 2rem;
-    max-width: 340px;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,51,102,0.10);
+    padding: 2rem 2rem 1.5rem 2rem;
+    max-width: 370px;
     min-width: 260px;
     font-size: 1.08rem;
     color: #003366;
     font-style: italic;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     border: 1.5px solid #e0e7ff;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+.ntc-testimonial:hover {
+    box-shadow: 0 8px 32px rgba(0,51,102,0.16);
+    transform: translateY(-6px) scale(1.03);
+}
+.ntc-testimonial-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #e0e7ff;
+    box-shadow: 0 2px 8px rgba(0,51,102,0.10);
 }
 .ntc-testimonial-quote {
     margin-bottom: 0.7rem;
     font-size: 1.13rem;
     color: #00509e;
+    text-align: center;
 }
 .ntc-testimonial-author {
     font-weight: 700;
     color: #003366;
     font-size: 1.01rem;
+    font-style: normal;
+    text-align: center;
+}
+.ntc-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,51,102,0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    max-width: 340px;
+    min-width: 260px;
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.ntc-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 32px rgba(0,51,102,0.16);
+}
+.ntc-card-header {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    color: #fff;
+}
+.ntc-card-tech { background: #00509e; }
+.ntc-card-soft { background: #0a2259; }
+.ntc-card-admin { background: #ffd700; color: #0a2259; }
+.ntc-card-body {
+    margin-bottom: 1.2rem;
+}
+.ntc-card-row {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+}
+.ntc-card-btn {
+    background: #0a2259;
+    color: #fff;
+    padding: 0.6em 1.5em;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: auto;
+    box-shadow: 0 2px 8px rgba(10, 34, 89, 0.08);
+    transition: background 0.2s;
+}
+.ntc-card-btn:hover {
+    background: #1c3a7a;
+}
+@media (max-width: 1100px) {
+  .hero-content-box { max-width: 98vw; }
+  .ntc-card-row-flex { gap: 1.2rem; }
 }
 @media (max-width: 900px) {
-    .ntc-hero { flex-direction: column; gap: 1.5rem; padding: 1.2rem 0.7rem; }
-    .ntc-hero-image { flex: 0 0 180px; }
-    .ntc-section { padding: 0 0.5rem; }
-    .ntc-card-row-flex { flex-direction: column; align-items: center; }
-    .ntc-testimonial-row { flex-direction: column; align-items: center; }
+  .ntc-card-row-flex {
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .ntc-card { max-width: 98vw; min-width: 0; flex: 1 1 100%; }
 }
 </style>
 {% endblock %} 
